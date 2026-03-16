@@ -1,0 +1,173 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  password        String?
+  image           String?
+  targetScore     Int?      // Target skor TOEFL (0-120)
+  testDate        DateTime?
+  currentLevel    Level     @default(BEGINNER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  // Relations
+  practiceAttempts PracticeAttempt[]
+  vocabProgress    VocabProgress[]
+  studyPlan        StudyPlan?
+  streaks          Streak[]
+  simulations      Simulation[]
+}
+
+model Question {
+  id            String     @id @default(cuid())
+  section       Section    // READING | LISTENING | SPEAKING | WRITING | VOCAB | GRAMMAR
+  type          String     // e.g. 'inference', 'main_idea', 'vocabulary'
+  difficulty    Difficulty @default(MEDIUM)
+  passage       String?
+  questionText  String
+  options       Json       // Array of option strings
+  correctAnswer Int        // Index of correct option
+  audioUrl      String?
+  explanation   String
+  tags          String[]
+  createdAt     DateTime   @default(now())
+  attempts      PracticeAttempt[]
+}
+
+model PracticeAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  questionId     String
+  selectedAnswer Int
+  isCorrect      Boolean
+  timeSpent      Int      // seconds
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id])
+  question       Question @relation(fields: [questionId], references: [id])
+}
+
+model Vocabulary {
+  id           String     @id @default(cuid())
+  word         String     @unique
+  partOfSpeech String
+  definition   String
+  definitionId String     // Definisi bahasa Indonesia
+  exampleEn    String
+  exampleId    String
+  synonyms     String[]
+  category     String
+  difficulty   Difficulty
+  audioUrl     String?
+  progress     VocabProgress[]
+}
+
+model VocabProgress {
+  id           String      @id @default(cuid())
+  userId       String
+  vocabId      String
+  status       VocabStatus @default(NEW) // NEW | LEARNING | MASTERED
+  nextReviewAt DateTime
+  repetitions  Int         @default(0)
+  easeFactor   Float       @default(2.5) // SM-2 algorithm
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  user         User        @relation(fields: [userId], references: [id])
+  vocab        Vocabulary  @relation(fields: [vocabId], references: [id])
+
+  @@unique([userId, vocabId])
+}
+
+model Simulation {
+  id             String     @id @default(cuid())
+  userId         String
+  type           SimType    // FULL | READING | LISTENING | SPEAKING | WRITING
+  status         SimStatus  @default(IN_PROGRESS)
+  readingScore   Int?       // 0-30
+  listeningScore Int?
+  speakingScore  Int?
+  writingScore   Int?
+  totalScore     Int?       // 0-120
+  answers        Json
+  startedAt      DateTime   @default(now())
+  completedAt    DateTime?
+  user           User       @relation(fields: [userId], references: [id])
+}
+
+model StudyPlan {
+  id           String     @id @default(cuid())
+  userId       String     @unique
+  weeks        Int
+  dailyMinutes Int
+  days         StudyDay[]
+  createdAt    DateTime   @default(now())
+  user         User       @relation(fields: [userId], references: [id])
+}
+
+model StudyDay {
+  id             String    @id @default(cuid())
+  planId         String
+  dayNumber      Int
+  title          String
+  tasks          Json      // Array of task objects
+  completedTasks Int[]
+  plan           StudyPlan @relation(fields: [planId], references: [id])
+}
+
+model Streak {
+  id             String   @id @default(cuid())
+  userId         String
+  date           DateTime
+  minutesStudied Int
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum Section {
+  READING
+  LISTENING
+  SPEAKING
+  WRITING
+  VOCAB
+  GRAMMAR
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum VocabStatus {
+  NEW
+  LEARNING
+  MASTERED
+}
+
+enum SimType {
+  FULL
+  READING
+  LISTENING
+  SPEAKING
+  WRITING
+}
+
+enum SimStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
