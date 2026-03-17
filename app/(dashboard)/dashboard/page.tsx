@@ -10,6 +10,19 @@ import { ArrowRight, Sparkles, BookOpen, Timer, Headphones } from "lucide-react"
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+interface StudyTask {
+  id: string;
+  text: string;
+  duration: number;
+  type: string;
+}
+
+interface StudyDay {
+  title: string;
+  tasks: StudyTask[];
+  completedTasks: string[];
+}
+
 export default async function DashboardPage() {
   const session = await auth();
   const stats = await getDashboardStats();
@@ -17,11 +30,11 @@ export default async function DashboardPage() {
   const studyPlan = await getStudyPlan();
 
   // Find today's tasks from study plan
-  const nextTargetDay = studyPlan?.days.find((d: any) => {
+  const nextTargetDay = (studyPlan?.days as unknown as StudyDay[] | undefined)?.find((d) => {
     const completed = Array.isArray(d.completedTasks) ? d.completedTasks : [];
     const tasks = Array.isArray(d.tasks) ? d.tasks : [];
     return completed.length < tasks.length;
-  }) as { title: string; tasks: any[]; completedTasks: any[] } | undefined;
+  });
 
   return (
     <div className="flex-1 space-y-10 p-8 max-w-7xl mx-auto">
@@ -37,7 +50,7 @@ export default async function DashboardPage() {
            <Button variant="outline" className="rounded-xl font-bold border-2" asChild>
              <Link href="/practice">Quick Practice</Link>
            </Button>
-           <Button className="rounded-xl font-black bg-primary text-black shadow-lg shadow-primary/20 gap-2" asChild>
+           <Button className="rounded-xl font-black bg-primary text-primary-foreground shadow-lg shadow-primary/20 gap-2" asChild>
              <Link href="/simulation">
                <Timer className="size-4" /> Start Simulation
              </Link>
@@ -95,7 +108,7 @@ export default async function DashboardPage() {
                     </Button>
                  </div>
                ) : (
-                 <Button size="lg" className="px-12 h-14 rounded-2xl font-black bg-primary text-black gap-3 shadow-xl shadow-primary/20" asChild>
+                 <Button size="lg" className="px-12 h-14 rounded-2xl font-black bg-primary text-primary-foreground gap-3 shadow-xl shadow-primary/20" asChild>
                    <Link href="/study-plan">
                      Create My Roadmap
                      <ArrowRight className="size-5" />
