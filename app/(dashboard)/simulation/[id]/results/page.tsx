@@ -49,7 +49,7 @@ export default async function SimulationResultsPage({
           <Trophy className="size-64" />
         </div>
         
-        <div className="relative z-10 flex flex-col items-center text-center gap-6 text-left">
+        <div className="relative z-10 flex flex-col items-center text-center gap-6">
           <div className="size-20 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/40 mb-2">
             <Award className="size-12 text-white" />
           </div>

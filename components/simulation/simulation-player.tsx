@@ -240,7 +240,7 @@ export default function SimulationPlayer({ simulation }: SimulationPlayerProps) 
             {/* Question Side */}
             <div className={cn(
               "overflow-y-auto p-8 flex flex-col",
-              (currentQuestion?.passage || currentSection === "WRITING") ? "w-full md:w-[450px] lg:w-[500px] xl:w-[600px] gap-4 shrink-0" : "flex-1"
+              (currentQuestion?.passage || currentSection === "WRITING") ? "w-full md:w-112.5 lg:w-125 xl:w-150 gap-4 shrink-0" : "flex-1"
             )}>
               <div className={cn("w-full mx-auto space-y-8", !(currentQuestion?.passage || currentSection === "WRITING") && "max-w-3xl py-12")}>
                 
@@ -348,7 +348,7 @@ export default function SimulationPlayer({ simulation }: SimulationPlayerProps) 
                   {currentSection === "WRITING" && (
                     <div className="space-y-4">
                        <textarea
-                        className="w-full h-[350px] p-8 rounded-3xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all outline-none text-lg leading-relaxed font-serif text-slate-700 dark:text-slate-300"
+                        className="w-full h-87.5 p-8 rounded-3xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all outline-none text-lg leading-relaxed font-serif text-slate-700 dark:text-slate-300"
                         placeholder="Start typing your response here..."
                         value={(userAnswers[currentQuestion?.id] as string) || ""}
                         onChange={(e) => handleTextChange(e.target.value)}

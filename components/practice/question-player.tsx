@@ -30,7 +30,7 @@ interface Question {
 interface QuestionPlayerProps {
   questions: Question[];
   section: string;
-  onComplete: (sessionData: any) => Promise<any>;
+  onComplete: (sessionData: { questionId: string; selectedAnswer: number; isCorrect: boolean; timeSpent: number }[]) => Promise<void>;
 }
 
 export function QuestionPlayer({ questions, section, onComplete }: QuestionPlayerProps) {
@@ -99,7 +99,7 @@ export function QuestionPlayer({ questions, section, onComplete }: QuestionPlaye
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {currentQuestion.passage && (
-          <Card className="h-[500px] overflow-y-auto bg-muted/30">
+          <Card className="h-125 overflow-y-auto bg-muted/30">
             <CardHeader>
               <CardTitle className="text-lg">Reading Passage</CardTitle>
             </CardHeader>
@@ -143,7 +143,7 @@ export function QuestionPlayer({ questions, section, onComplete }: QuestionPlaye
                   )}
                   onClick={() => setSelectedOption(index)}
                 >
-                  <span className="flex-shrink-0 mr-4 font-bold opacity-50">
+                  <span className="shrink-0 mr-4 font-bold opacity-50">
                     {String.fromCharCode(65 + index)}.
                   </span>
                   {option}
