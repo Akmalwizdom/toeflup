@@ -119,7 +119,7 @@ model StudyDay {
   dayNumber      Int
   title          String
   tasks          Json      // Array of task objects
-  completedTasks Int[]
+  completedTasks String[]
   plan           StudyPlan @relation(fields: [planId], references: [id])
 }
 
