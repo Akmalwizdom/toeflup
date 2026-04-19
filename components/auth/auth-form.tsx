@@ -9,14 +9,19 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 
 const authSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  name: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().min(2, "Name must be at least 2 characters").optional()
+  ),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-type AuthFormValues = z.infer<typeof authSchema>;
+type AuthFormInput = z.input<typeof authSchema>;
+type AuthFormValues = z.output<typeof authSchema>;
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -31,7 +36,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AuthFormValues>({
+  } = useForm<AuthFormInput, unknown, AuthFormValues>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       name: "",
@@ -44,12 +49,18 @@ export function AuthForm({ mode }: AuthFormProps) {
     setIsLoading(true);
     setError(null);
 
+    const payload = {
+      ...data,
+      name: data.name?.trim(),
+      email: data.email.trim().toLowerCase(),
+    };
+
     if (mode === "register") {
       try {
         const response = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -59,40 +70,80 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         // Auto login after registration
         const result = await signIn("credentials", {
-          email: data.email,
+          email: payload.email,
           password: data.password,
           redirect: false,
         });
 
         if (result?.error) {
+          toast({
+            title: "Registrasi berhasil, login gagal",
+            description: "Akun dibuat, tetapi sesi login belum bisa dibuat. Silakan login ulang.",
+            variant: "destructive",
+          });
           throw new Error("Login failed after registration");
         }
 
+        toast({
+          title: "Registrasi berhasil",
+          description: "Akun dibuat. Mengalihkan ke dashboard.",
+        });
         router.push("/dashboard");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Registration failed");
+        const message = err instanceof Error ? err.message : "Registration failed";
+        toast({
+          title: "Registrasi gagal",
+          description: message,
+          variant: "destructive",
+        });
+        setError(message);
       } finally {
         setIsLoading(false);
       }
     } else {
       try {
         const result = await signIn("credentials", {
-          email: data.email,
+          email: payload.email,
           password: data.password,
           redirect: false,
         });
 
         if (result?.error) {
-          throw new Error("Invalid email or password");
+          toast({
+            title: "Login gagal",
+            description: "Email atau password tidak cocok.",
+            variant: "destructive",
+          });
+          throw new Error("Invalid email or password: " + result.error);
         }
 
+        toast({
+          title: "Login berhasil",
+          description: "Mengalihkan ke dashboard.",
+        });
         router.push("/dashboard");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Login failed");
+        const message = err instanceof Error ? err.message : "Login failed";
+        if (!message.startsWith("Invalid email or password")) {
+          toast({
+            title: "Login gagal",
+            description: message,
+            variant: "destructive",
+          });
+        }
+        setError(message);
       } finally {
         setIsLoading(false);
       }
     }
+  }
+
+  function onInvalid() {
+    toast({
+      title: "Form belum valid",
+      description: "Periksa kembali email dan password yang diisi.",
+      variant: "destructive",
+    });
   }
 
   return (
@@ -108,7 +159,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
           {error && (
             <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md">
               {error}

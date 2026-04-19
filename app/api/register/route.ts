@@ -13,8 +13,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedName =
+      typeof name === "string" && name.trim().length > 0 ? name.trim() : null;
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email: {
+          equals: normalizedEmail,
+          mode: "insensitive",
+        },
+      },
     });
 
     if (existingUser) {
@@ -28,8 +37,8 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: normalizedName,
+        email: normalizedEmail,
         password: hashedPassword,
       },
     });
