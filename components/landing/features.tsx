@@ -31,7 +31,7 @@ export function Features() {
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
             Segalanya yang Kamu Butuhkan untuk Lulus
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="mx-auto max-w-2xl text-lg text-zinc-700 dark:text-zinc-300">
             Didesain oleh pakar edukasi untuk memberikan pengalaman belajar mandiri yang paling efektif.
           </p>
         </div>
@@ -46,7 +46,7 @@ export function Features() {
                 <feature.icon className="h-6 w-6" />
               </div>
               <h3 className="mb-3 text-xl font-bold text-black dark:text-white">{feature.title}</h3>
-              <p className="text-zinc-600 dark:text-zinc-400">{feature.description}</p>
+              <p className="text-zinc-700 dark:text-zinc-300">{feature.description}</p>
             </div>
           ))}
         </div>

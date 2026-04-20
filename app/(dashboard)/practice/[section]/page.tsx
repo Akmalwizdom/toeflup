@@ -39,7 +39,7 @@ export default async function PracticeSectionPage({
   }
 
   // Transform Prisma questions to match QuestionPlayer component interface
-  const formattedQuestions = questions.map((q: any) => ({
+  const formattedQuestions = questions.map((q) => ({
     id: q.id,
     content: q.questionText,
     options: q.options as string[],
@@ -48,9 +48,9 @@ export default async function PracticeSectionPage({
     explanation: q.explanation,
   }));
 
-  const handleComplete = async (answers: any) => {
+  const handleComplete = async (answers: { questionId: string; selectedAnswer: number; isCorrect: boolean; timeSpent: number }[]) => {
     "use server";
-    return await submitPracticeSession(answers);
+    await submitPracticeSession(answers);
   };
 
   return (

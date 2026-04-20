@@ -15,11 +15,11 @@ export function Footer() {
           </div>
           
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            <Link href="#" className="hover:text-black dark:hover:text-white">Tentang Kami</Link>
-            <Link href="#" className="hover:text-black dark:hover:text-white">Fitur</Link>
-            <Link href="#" className="hover:text-black dark:hover:text-white">Harga</Link>
-            <Link href="#" className="hover:text-black dark:hover:text-white">Privasi</Link>
-            <Link href="#" className="hover:text-black dark:hover:text-white">Syarat & Ketentuan</Link>
+            <Link href="/about" className="hover:text-black dark:hover:text-white">Tentang Kami</Link>
+            <Link href="/#features" className="hover:text-black dark:hover:text-white">Fitur</Link>
+            <Link href="/#pricing" className="hover:text-black dark:hover:text-white">Harga</Link>
+            <Link href="/privacy" className="hover:text-black dark:hover:text-white">Privasi</Link>
+            <Link href="/terms" className="hover:text-black dark:hover:text-white">Syarat & Ketentuan</Link>
           </div>
         </div>
       </div>

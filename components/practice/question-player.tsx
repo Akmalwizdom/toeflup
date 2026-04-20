@@ -5,15 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress, ProgressIndicator } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-
-interface Question {
-  id: string;
-  content: string;
-  options: string[];
-  passage?: string | null;
-  audioUrl?: string | null;
-}
-
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 

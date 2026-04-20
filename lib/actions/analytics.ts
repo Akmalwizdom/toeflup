@@ -2,11 +2,12 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { startOfDay, subDays, format } from "date-fns";
 
 export async function getPerformanceMetrics() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;
 
@@ -52,12 +53,12 @@ export async function getPerformanceMetrics() {
   return {
     sections: Object.entries(aggregation).map(([name, stats]) => ({
       name,
-      accuracy: Math.round((stats.correct / stats.total) * 100),
+      accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
       count: stats.total
     })),
     types: Object.entries(typeAggregation).map(([name, stats]) => ({
       name,
-      accuracy: Math.round((stats.correct / stats.total) * 100),
+      accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
       count: stats.total
     }))
   };
@@ -65,7 +66,7 @@ export async function getPerformanceMetrics() {
 
 export async function getScoreHistory() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (!session?.user?.id) redirect("/login");
 
   const userId = session.user.id;
 

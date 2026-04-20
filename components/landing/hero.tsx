@@ -20,7 +20,7 @@ export function Hero() {
             Raih Skor TOEFL Impian Tanpa <span className="text-zinc-500">Ribet</span>
           </h1>
           
-          <p className="mb-10 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400 md:text-xl">
+          <p className="mb-10 max-w-2xl text-lg text-zinc-700 dark:text-zinc-300 md:text-xl">
             Latihan soal adaptif, sistem flashcards cerdas, dan simulasi real-time yang dirancang khusus untuk membantu kamu lulus tes TOEFL iBT dengan percaya diri.
           </p>
           
@@ -38,7 +38,7 @@ export function Hero() {
             </Link>
           </div>
           
-          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-zinc-500">
+          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-zinc-600 dark:text-zinc-300">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
               <span>570+ Kosakata Akademik</span>
@@ -54,7 +54,7 @@ export function Hero() {
           </div>
           
           {/* Dashboard Preview Mockup - Browser Frame */}
-          <div className="mt-20 w-full max-w-6xl rounded-2xl border border-zinc-200 bg-white p-1 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
+          <div id="how-it-works" className="mt-20 w-full max-w-6xl rounded-2xl border border-zinc-200 bg-white p-1 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:border-zinc-800 dark:bg-zinc-900">
             <div className="flex h-10 items-center justify-start gap-2 border-b bg-zinc-50/50 px-4 dark:bg-zinc-900/50">
               <div className="flex gap-1.5">
                 <div className="size-2.5 rounded-full bg-red-400/50" />

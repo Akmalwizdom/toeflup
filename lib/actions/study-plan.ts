@@ -69,8 +69,7 @@ export async function generateStudyPlan(weeks: number, dailyMinutes: number) {
       dayNumber: i,
       title,
       tasks,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      completedTasks: [] as any,
+      completedTasks: [],
     });
   }
 
@@ -95,8 +94,7 @@ export async function toggleTaskCompletion(dayId: string, taskId: string) {
 
   if (!studyDay) throw new Error("Study day not found");
 
-  // Cast to string[] to match updated schema (fixes out-of-sync Prisma types)
-  const completedTasksStr = studyDay.completedTasks as unknown as string[];
+  const completedTasksStr = studyDay.completedTasks;
   let newCompletedTasks = [...completedTasksStr];
 
   if (newCompletedTasks.includes(taskId)) {
@@ -108,8 +106,7 @@ export async function toggleTaskCompletion(dayId: string, taskId: string) {
   await prisma.studyDay.update({
     where: { id: dayId },
     data: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      completedTasks: newCompletedTasks as any
+      completedTasks: newCompletedTasks
     }
   });
 

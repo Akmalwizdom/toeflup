@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { getDashboardStats } from "@/lib/actions/dashboard";
 import { getStreakStats } from "@/lib/actions/streak";
+import { getWeaknessAnalysis } from "@/lib/actions/analytics";
 import { getStudyPlan } from "@/lib/actions/study-plan";
 import StatsCards from "@/components/dashboard/stats-cards";
 import StreakDisplay from "@/components/dashboard/streak-display";
@@ -28,6 +29,7 @@ export default async function DashboardPage() {
   const stats = await getDashboardStats();
   const streakStats = await getStreakStats();
   const studyPlan = await getStudyPlan();
+  const weakness = await getWeaknessAnalysis();
 
   // Find today's tasks from study plan
   const nextTargetDay = (studyPlan?.days as unknown as StudyDay[] | undefined)?.find((d) => {
@@ -44,7 +46,13 @@ export default async function DashboardPage() {
           <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white uppercase italic">
             Welcome Back, <span className="text-primary">{session?.user?.name?.split(' ')[0] || "Scholar"}</span>!
           </h1>
-          <p className="text-slate-500 font-medium tracking-tight">Your path to TOEFL mastery is 24% complete. Keep pushing.</p>
+          <p className="text-slate-500 font-medium tracking-tight">Your path to TOEFL mastery is {studyPlan?.days
+            ? `${Math.round((studyPlan.days.filter((d: any) => {
+                const ct = Array.isArray(d.completedTasks) ? d.completedTasks : [];
+                const tasks = Array.isArray(d.tasks) ? d.tasks : [];
+                return ct.length >= tasks.length && tasks.length > 0;
+              }).length / studyPlan.days.length) * 100)}%`
+            : "0%"} complete. Keep pushing.</p>
         </div>
         <div className="flex items-center gap-3">
            <Button variant="outline" className="rounded-xl font-bold border-2" asChild>
@@ -150,7 +158,7 @@ export default async function DashboardPage() {
             <div className="relative z-10 space-y-4">
               <h4 className="font-black italic text-slate-900 dark:text-white">Expert Evaluation</h4>
               <p className="text-sm font-medium text-slate-500 leading-relaxed">
-                &quot;Your Reading scores have improved by 15% in the last 7 days. We recommend shifting focus to **Listening** for the next 48 hours to balance your profile.&quot;
+                {weakness.recommendation}
               </p>
               <Button variant="link" className="p-0 h-auto font-black text-xs text-primary uppercase tracking-widest gap-1 group-hover:gap-2 transition-all" asChild>
                 <Link href="/analytics">
